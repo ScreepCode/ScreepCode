@@ -1,0 +1,61 @@
+name: Metrics
+on:
+  # Schedule daily updates
+  schedule: [{cron: "0 5 * * *"}]
+  # (optional) Run workflow manually
+  workflow_dispatch:
+jobs:
+  github-metrics:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    name: GitHub Metrics
+    steps:
+      - uses: lowlighter/metrics@latest
+        name: Render Base Infos
+        with:
+          filename: metrics.base.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
+          base: header, activity
+          
+      - uses: lowlighter/metrics@latest
+        name: Render Languages
+        with:
+          filename: metrics.plugin.languages.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
+          base: ""
+          config_timezone: Europe/Berlin
+          plugin_languages: yes
+          plugin_languages_details: lines, percentage
+          plugin_languages_limit: 4
+
+      - uses: lowlighter/metrics@latest
+        name: Render Habits facts
+        with:
+          filename: metrics.plugin.habits.facts.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
+          base: ""
+          plugin_habits: yes
+          plugin_habits_facts: yes
+          plugin_habits_charts: no
+          config_timezone: Europe/Paris
+
+
+      - uses: lowlighter/metrics@latest
+        name: Render Habits Charts
+        with:
+          filename: metrics.plugin.habits.charts.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
+          base: ""
+          plugin_habits: yes
+          plugin_habits_facts: no
+          plugin_habits_charts: yes
+          config_timezone: Europe/Paris
